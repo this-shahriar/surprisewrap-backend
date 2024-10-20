@@ -5,6 +5,7 @@ import { AuthRoute } from "./routes/Auth";
 import { Products } from "./routes/Products";
 import { Orders } from "./routes/Orders";
 import { GiftPackages } from "./routes/GiftPackages";
+import { cors } from "hono/cors";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ class Server {
   private app = new Hono();
 
   constructor(private port: string) {
+    this.app.use(cors({ origin: "*" }));
     new AuthRoute().register(this.app);
     new Products().register(this.app);
     new Orders().register(this.app);

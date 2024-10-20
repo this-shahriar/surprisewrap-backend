@@ -44,6 +44,7 @@ export class AuthRoute {
         username,
         email,
         passwordHash,
+        role: "customer",
       });
 
       return c.json({ message: "User registered successfully" });
