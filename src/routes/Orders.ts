@@ -20,7 +20,7 @@ interface Order {
   delivery_address: string;
   totalPrice: number;
   status: string;
-  createdAt: Date;
+  createdAt: number;
 }
 
 export class Orders {
@@ -41,7 +41,7 @@ export class Orders {
         delivery_address,
         totalPrice,
         status,
-        createdAt: new Date(),
+        createdAt: Date.now(),
       };
 
       const orderRef = await addDoc(collection(db, "orders"), { ...order });
