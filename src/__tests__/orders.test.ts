@@ -28,7 +28,7 @@ const createOrder = async (server: any, jwtToken: string, userId: string) => {
   const newOrder = {
     userId: userId,
     products: JSON.stringify(["productId1", "productId2"]),
-    quantity: 1,
+    delivery_address: "Kolonivagen, Karlskrona",
     totalPrice: 100,
     status: "paused",
   };

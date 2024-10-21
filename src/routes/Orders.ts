@@ -17,7 +17,7 @@ import { db } from "../configs/firebase";
 interface Order {
   products: string;
   userId: string;
-  quantity: number;
+  delivery_address: string;
   totalPrice: number;
   status: string;
   createdAt: Date;
@@ -33,12 +33,12 @@ export class Orders {
     });
 
     app.post("/orders", async (c) => {
-      const { products, userId, quantity, totalPrice, status } =
+      const { products, userId, delivery_address, totalPrice, status } =
         await c.req.json();
       const order: Order = {
         products,
         userId,
-        quantity,
+        delivery_address,
         totalPrice,
         status,
         createdAt: new Date(),

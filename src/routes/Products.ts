@@ -23,14 +23,11 @@ interface Product {
 
 export class Products {
   register(app: Hono) {
-    app.use("/products/*", (c, next) => {
-      const jwtMiddleware = jwt({
-        secret: process.env.HASH_SECRET || fallback_secret,
-      });
-      return jwtMiddleware(c, next);
+    const jwtMiddleware = jwt({
+      secret: process.env.HASH_SECRET || fallback_secret,
     });
 
-    app.post("/products", async (c) => {
+    app.post("/products", jwtMiddleware, async (c) => {
       const { name, price, image, currency, category, searchKey } =
         await c.req.json();
       const product: Product = {
@@ -72,7 +69,7 @@ export class Products {
       return c.json({ id: docSnap.id, ...docSnap.data() });
     });
 
-    app.put("/products/:id", async (c) => {
+    app.put("/products/:id", jwtMiddleware, async (c) => {
       const { id } = c.req.param();
       const updatedData = await c.req.json();
       const productRef = doc(db, "products", id);
@@ -87,7 +84,7 @@ export class Products {
       return c.json({ message: "Product updated successfully" });
     });
 
-    app.delete("/products/:id", async (c) => {
+    app.delete("/products/:id", jwtMiddleware, async (c) => {
       const { id } = c.req.param();
       const productRef = doc(db, "products", id);
 

@@ -74,7 +74,12 @@ export class AuthRoute {
         "HS256"
       );
 
-      return c.json({ message: "Login successful", token, userId: userDoc.id });
+      return c.json({
+        message: "Login successful",
+        token,
+        userId: userDoc.id,
+        role: userData.role,
+      });
     });
   }
 }
