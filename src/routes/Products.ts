@@ -7,21 +7,11 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
-  query,
-  where,
 } from "firebase/firestore";
 import { jwt } from "hono/jwt";
 import { fallback_secret } from "./Auth";
 import { db } from "../configs/firebase";
-
-interface Product {
-  name: string;
-  price: number;
-  image: string;
-  currency: string;
-  category: string;
-  searchKey: string;
-}
+import { Product } from "../interfaces/product";
 
 export class Products {
   register(app: Hono) {

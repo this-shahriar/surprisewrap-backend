@@ -13,15 +13,7 @@ import {
 import { jwt } from "hono/jwt";
 import { fallback_secret } from "./Auth";
 import { db } from "../configs/firebase";
-
-interface Order {
-  products: string;
-  userId: string;
-  delivery_address: string;
-  totalPrice: number;
-  status: string;
-  createdAt: number;
-}
+import { Order } from "../interfaces/order";
 
 export class Orders {
   register(app: Hono) {

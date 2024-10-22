@@ -9,6 +9,7 @@ import {
   where,
   DocumentData,
 } from "firebase/firestore";
+import { sendMail } from "../configs/nodemailer";
 
 export const fallback_secret = "YouR26593seCRet90292kEy";
 const JWT_SECRET = process.env.HASH_SECRET || fallback_secret; // Use a secure, environment-specific key
@@ -80,6 +81,12 @@ export class AuthRoute {
         userId: userDoc.id,
         role: userData.role,
       });
+    });
+
+    app.post("/forgot-password", async (c) => {
+      const { email } = await c.req.json();
+      await sendMail({ email: email });
+      return c.json({ message: "Email sent." });
     });
   }
 }
