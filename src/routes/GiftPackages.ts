@@ -12,13 +12,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../configs/firebase";
 
-interface Order {
+interface GiftPackage {
   products: string;
   userId: string;
   quantity: number;
   totalPrice: number;
   status: string;
-  createdAt: Date;
+  createdAt: number;
 }
 
 export class GiftPackages {
@@ -26,18 +26,19 @@ export class GiftPackages {
     app.post("/gift-packages", async (c) => {
       const { products, userId, quantity, totalPrice, status } =
         await c.req.json();
-      const giftPackage: Order = {
+      const giftPackage: GiftPackage = {
         products,
         userId,
         quantity,
         totalPrice,
         status,
-        createdAt: new Date(),
+        createdAt: Date.now(),
       };
 
-      const packagesRef = await addDoc(collection(db, "gift-packages"), {
-        ...giftPackage,
-      });
+      const packagesRef = await addDoc(
+        collection(db, "gift-packages"),
+        giftPackage
+      );
       return c.json({
         message: "Gift package created successfully",
         id: packagesRef.id,
