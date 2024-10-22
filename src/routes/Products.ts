@@ -7,6 +7,8 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { jwt } from "hono/jwt";
 import { fallback_secret } from "./Auth";
@@ -47,11 +49,32 @@ export class Products {
     });
 
     app.get("/products", async (c) => {
-      const snapshot = await getDocs(collection(db, "products"));
-      const products = snapshot.docs.map((doc) => ({
+      const { search, category, order } = c.req.query();
+      const productRef = collection(db, "products");
+      const snapshot = await getDocs(productRef);
+
+      let products = snapshot.docs.map((doc): any => ({
         id: doc.id,
         ...doc.data(),
       }));
+
+      if (search) {
+        const searchLower = search.toLowerCase();
+        products = products.filter((product) =>
+          product?.searchKey.toLowerCase().includes(searchLower)
+        );
+      }
+
+      if (category) {
+        products = products.filter((product) => product?.category == category);
+      }
+
+      if (order) {
+        if (order == "lth")
+          products = products.sort((a, b) => a?.price - b?.price);
+        else if (order == "htl")
+          products = products.sort((a, b) => b?.price - a.price);
+      }
 
       return c.json(products);
     });
