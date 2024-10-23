@@ -10,10 +10,18 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { jwt } from "hono/jwt";
+import { decode, jwt } from "hono/jwt";
 import { fallback_secret } from "./Auth";
 import { db } from "../configs/firebase";
 import { Order } from "../interfaces/order";
+import { sendMail } from "../configs/nodemailer";
+
+const extractEmail = async (c: any) => {
+  const authHeader = c.req.header("Authorization");
+  const token = authHeader.split(" ")[1];
+  const decoded = decode(token);
+  return decoded?.payload?.email;
+};
 
 export class Orders {
   register(app: Hono) {
@@ -37,6 +45,12 @@ export class Orders {
       };
 
       const orderRef = await addDoc(collection(db, "orders"), { ...order });
+
+      sendMail({
+        email: extractEmail(c),
+        subject: "Order created",
+        text: `Your order is created and will be delivered to ${delivery_address}`,
+      });
       return c.json({
         message: "Order created successfully",
         id: orderRef.id,
@@ -99,6 +113,22 @@ export class Orders {
       if (!docSnap.exists()) {
         c.status(404);
         return c.json({ error: "Order not found" });
+      }
+
+      if (
+        updatedData?.status &&
+        (updatedData.status == "cancelled" || updatedData.status == "delivered")
+      ) {
+        sendMail({
+          email: extractEmail(c),
+          subject: "Info about your order",
+          text:
+            updatedData?.status === "cancelled"
+              ? "Your order is cancelled"
+              : updatedData?.status === "delivered"
+              ? "Your order is delivered successfully"
+              : "",
+        });
       }
 
       await updateDoc(orderRef, { ...updatedData });
