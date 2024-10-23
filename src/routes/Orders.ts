@@ -45,12 +45,14 @@ export class Orders {
       };
 
       const orderRef = await addDoc(collection(db, "orders"), { ...order });
-
-      sendMail({
-        email: extractEmail(c),
-        subject: "Order created",
-        text: `Your order is created and will be delivered to ${delivery_address}`,
-      });
+      const email = await extractEmail(c);
+      if (email) {
+        sendMail({
+          email,
+          subject: "Order created",
+          text: `Your order is created and will be delivered to ${delivery_address}`,
+        });
+      }
       return c.json({
         message: "Order created successfully",
         id: orderRef.id,
@@ -115,12 +117,15 @@ export class Orders {
         return c.json({ error: "Order not found" });
       }
 
+      const email = await extractEmail(c);
+
       if (
         updatedData?.status &&
+        email &&
         (updatedData.status == "cancelled" || updatedData.status == "delivered")
       ) {
         sendMail({
-          email: extractEmail(c),
+          email: email,
           subject: "Info about your order",
           text:
             updatedData?.status === "cancelled"
