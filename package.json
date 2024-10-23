@@ -4,7 +4,8 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "test": "jest --runInBand",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "coverage": "jest --runInBand --coverage"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.2",

@@ -54,7 +54,7 @@ describe("AuthRoute", () => {
     expect(response.body.error).toBe("User already exists");
   });
 
-  it("should login an existing user", async () => {
+  it("should register and login an user", async () => {
     await request(server).post("/register").send({
       username: "testuser",
       email: "testuser@example.com",
